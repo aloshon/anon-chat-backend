@@ -3,7 +3,7 @@
 
 DROP DATABASE anon_chat;
 CREATE DATABASE anon_chat;
-\connect anon_chat;
+\connect anon_chat; 
 
 \i anonChat-schema.sql
 \i anonChat-seed.sql
