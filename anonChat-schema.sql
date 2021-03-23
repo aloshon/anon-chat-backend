@@ -10,6 +10,7 @@ CREATE TABLE group_chats (
     id SERIAL PRIMARY KEY,
     unique_id uuid UNIQUE DEFAULT UUID_GENERATE_V4(),
     title TEXT NOT NULL,
+    description TEXT NOT NULL,
     timestamp TEXT NOT NULL,
     creator_id INTEGER
       REFERENCES users
