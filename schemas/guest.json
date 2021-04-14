@@ -1,0 +1,34 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "examples": [
+        {
+            "unique_id": "b2ec2167-6611-429d-8877-20727850022a",
+            "username": "exampleusername",
+            "user_id": 1,
+            "group_chat_id": 1
+        }
+    ],
+    "required": [
+        "unique_id",
+        "username",
+        "user_id",
+        "group_chat_id"
+    ],
+    "properties": {
+        "unique_id": {
+            "type": "string"
+        },
+        "username": {
+            "type": "string"
+        },
+        "user_id": {
+            "type": "integer"  
+        },
+        "group_chat_id": {
+            "type": "integer"
+        }
+    },
+    "additionalProperties": false
+}

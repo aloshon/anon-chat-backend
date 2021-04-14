@@ -1,7 +1,8 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(30) UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -33,4 +34,10 @@ CREATE TABLE chat_messages (
     group_chat_id INTEGER
       REFERENCES group_chats ON DELETE CASCADE,
     timestamp TEXT NOT NULL
+);
+
+CREATE TABLE block_list (
+    id SERIAL PRIMARY KEY,
+    blocked_username TEXT,
+    username TEXT
 );
