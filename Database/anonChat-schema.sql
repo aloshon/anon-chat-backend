@@ -14,13 +14,13 @@ CREATE TABLE group_chats (
     description TEXT NOT NULL,
     timestamp TEXT NOT NULL,
     creator_id INTEGER
-      REFERENCES users
+      REFERENCES users ON DELETE CASCADE
 );
 
 CREATE TABLE guests (
     username TEXT NOT NULL,
     user_id INTEGER
-      REFERENCES users,
+      REFERENCES users ON DELETE CASCADE,
     group_chat_id INTEGER
       REFERENCES group_chats ON DELETE CASCADE,
     PRIMARY KEY (user_id, group_chat_id)
@@ -30,7 +30,7 @@ CREATE TABLE chat_messages (
     id SERIAL PRIMARY KEY,
     message TEXT,
     user_id INTEGER
-      REFERENCES users,
+      REFERENCES users ON DELETE CASCADE,
     group_chat_id INTEGER
       REFERENCES group_chats ON DELETE CASCADE,
     timestamp TEXT NOT NULL
