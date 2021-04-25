@@ -13,26 +13,6 @@ const addGuestSchema = require("../schemas/guest.json");
 
 const router = new express.Router();
 
-
-/** GET /[id] id is the unique_id of the group_chat
- *
- * Gets guest list from group chat using group_chat_id.
- *
- * Returns { guests }
- *
- */
-
-router.get("/:id", ensureLoggedIn, ensureCreatorOfGroupChat, async function (req, res, next) {
-    try {
-      // getGuestList will take in group_chat_id from params
-      // Returns the guest list
-      const guests = await GroupChat.getGuestList(req.query.group_chat_id);
-      return res.status(200).json({ guests });
-    } catch (err) {
-      return next(err);
-    }
-  });
-
 /** POST /[id]
  *
  * fields must be: { unique_id, username, user_id, group_chat_id, }

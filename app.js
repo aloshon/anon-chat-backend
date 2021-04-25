@@ -8,6 +8,7 @@ const cors = require("cors");
 const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./auth");
+
 const messageRoutes = require("./routes/message");
 const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");

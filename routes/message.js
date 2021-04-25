@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 
-const { BadRequestError, ForbiddenError } = require("../expressError");
+const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn, ensureOnGuestList } = require("../auth");
 const GroupChat = require("../models/groupChat");
 
@@ -51,14 +51,12 @@ router.get("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, 
 
 router.post("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, next) {
   try {
-
     const validator = jsonschema.validate(req.body, addMessageSchema)
 
     if(!validator.valid){
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
     const message = await GroupChat.sendMessage(req.body);
     return res.status(201).json({ message });
   } catch (err) {

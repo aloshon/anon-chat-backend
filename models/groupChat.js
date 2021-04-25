@@ -85,6 +85,7 @@ class GroupChat {
    **/
 
   static async getGroupChat(unique_id) {
+    
     const groupChat = await db.query(
           `SELECT id,
           unique_id,
@@ -96,7 +97,6 @@ class GroupChat {
           WHERE unique_id = $1`,
         [unique_id]);
 
-    
     if(!groupChat) throw new NotFoundError(`Cannot find group chat with unique_id of ${unique_id}`)
 
     const guestList = await db.query(
@@ -180,37 +180,17 @@ class GroupChat {
         `INSERT INTO guests
          (username, user_id, group_chat_id)
          VALUES ($1, $2, $3)
-         RETURNING *`,
+         RETURNING username, user_id, group_chat_id`,
       [
         username,
         user_id,
         group_chat_id
       ]);
 
-    return result;
+    return result.rows[0];
     } catch(e){
       throw new BadRequestError(`Error inviting guest to group chat! Please try again later: ${e}`);
     }
-  }
-
-  /** getGuestList
-  *
-  * data should be group_chat_id
-  *
-  * Returns [{ username, user_id }...]
-  *
-  * Throws NotFoundError if no guest list found.
-  * */
-
-  static async getGuestList(group_chat_id) {
-    const guests = await db.query(
-      `SELECT username,
-      user_id
-      FROM guests
-      WHERE group_chat_id = $1`,
-    [group_chat_id]);
-    if(!guests) throw new NotFoundError(`Cannot find guests with in the group chat id of ${group_chat_id}`)
-    return guests.rows;
   }
 
   /** getCreatorId

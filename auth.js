@@ -18,7 +18,7 @@ const User = require("./models/user");
  * then authHeader is not defined or falsy. However if there is a req.headers,
  * then it will be req.headers.authorization. Which is s string `Bearer ${token}`
  *
- * Not an error if no token was provided or if the token is not valid.
+ * Not an error if no token was provided or if the token is not valid, just log it
  */
 
 function authenticateJWT(req, res, next) {
@@ -99,7 +99,7 @@ async function ensureOnGuestList(req, res, next) {
 async function ensureCreatorOfGroupChat(req, res, next) {
   try {
     const creatorId = await GroupChat.getCreatorId(req.params.id);
-
+    
     if(creatorId !== res.locals.user.user_id){
       throw new ForbiddenError("Not the creator of this group chat!")
     }

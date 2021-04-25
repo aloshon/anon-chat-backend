@@ -54,6 +54,7 @@ class User {
    **/
 
   static async register({ username, password, isAdmin }) {
+
     const duplicateCheck = await db.query(
           `SELECT username
            FROM users
@@ -120,7 +121,8 @@ class User {
   }
 
   /** Given a username, return user's username.
-   * Just to check if user exists
+   * Just to check if user exists, no need to request
+   * for the block list
    *
    * Returns { username }
    *
@@ -184,10 +186,17 @@ class User {
       `SELECT username
        FROM users
        WHERE username = $1`,
-      [username],
+      [username]
     );
 
-    if (!checkUsernameExists.rows[0]) {
+    const checkUsernameToBlockExists = await db.query(
+      `SELECT username
+       FROM users
+       WHERE username = $1`,
+      [blocked_username]
+    );
+
+    if (!checkUsernameExists.rows[0] || !checkUsernameToBlockExists.rows[0]) {
       throw new NotFoundError(`No user found with username: ${username}`);
     }
 

@@ -3,13 +3,10 @@ const request = require("supertest");
 const app = require("./app");
 const db = require("./db");
 
-beforeAll(done => {
-    done()
-})
-
-test("not found 404", async () => {
-    const resp = await request(app).get("/shoot/idk");
+test("not found 404", async (done) => {
+    const resp = await request(app).get("/nope");
     expect(resp.statusCode).toEqual(404);
+    done();
 });
 
 afterAll(done => {
