@@ -71,7 +71,6 @@ class GroupChat {
           WHERE g.user_id = $1
           ORDER BY gc.id ASC`,
         [user_id]);
-    if(!groupChats) throw new NotFoundError(`Cannot find group chat with user_id: ${user_id}`)
     return groupChats.rows;
   }
 
@@ -85,7 +84,6 @@ class GroupChat {
    **/
 
   static async getGroupChat(unique_id) {
-    
     const groupChat = await db.query(
           `SELECT id,
           unique_id,
@@ -96,8 +94,8 @@ class GroupChat {
           FROM group_chats
           WHERE unique_id = $1`,
         [unique_id]);
-
-    if(!groupChat) throw new NotFoundError(`Cannot find group chat with unique_id of ${unique_id}`)
+    
+    if(!groupChat.rows) throw new NotFoundError(`Cannot find group chat with unique_id of ${unique_id}`)
 
     const guestList = await db.query(
       `SELECT username,
@@ -110,16 +108,20 @@ class GroupChat {
     return groupChat.rows[0];
   }
 
-  /** Given a unique_id, get messages from group chat.
+  /** Given a unique_id and offset get messages from group chat.
+   * Offset will be the amount of messages that the user already
+   * has loaded, so do not ask for them again.
+   * fetchAmt is the amount of rows we want to fetch,
+   * hard coded to 25. 
    *
    * Returns  [{id, user_id, message, timestamp}...] 
    *
    * Throws NotFoundError if not found.
    **/
 
-  static async getMessages(unique_id) {
+  static async getMessages(unique_id, offset, fetchAmt=25) {
     const messages = await db.query(
-          `SELECT c.id,
+          `SELECT * FROM (SELECT c.id,
             c.user_id,
             c.message,
             c.timestamp
@@ -127,9 +129,11 @@ class GroupChat {
             LEFT JOIN group_chats AS "gc"
           ON c.group_chat_id = gc.id
           WHERE gc.unique_id = $1
-          ORDER BY c.id ASC`,
-        [unique_id]);
-    if(!messages) throw new NotFoundError(`Cannot find group chat with id: ${unique_id}`)
+          ORDER BY c.id DESC
+          OFFSET $2 ROWS
+          FETCH NEXT $3 ROWS ONLY) sub
+          ORDER BY id ASC`,
+        [unique_id, offset, fetchAmt]);
     return messages.rows;
   }
 
@@ -192,6 +196,28 @@ class GroupChat {
       throw new BadRequestError(`Error inviting guest to group chat! Please try again later: ${e}`);
     }
   }
+
+    /** checkListLength
+  *
+  * data should be group_chat_id
+  *
+  * Returns [id, ...]
+  *
+  * Throws Not Found if no guests are found.
+  * */
+
+ static async checkListLength(group_chat_id) {
+  const result = await db.query(
+    `SELECT username
+    FROM guests
+    WHERE group_chat_id = $1`,
+  [group_chat_id]);
+
+  if(!result.rows.length) throw new NotFoundError(`Cannot find group chat with id of ${unique_id}`);
+
+return result.rows.length;
+
+}
 
   /** getCreatorId
   *

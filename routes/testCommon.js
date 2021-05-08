@@ -41,6 +41,55 @@ async function commonBeforeAll(){
         isAdmin: false
     }));
 
+    // Extra users just to test that guests lists keep the 10 user limit
+    testUsers[3] = (await User.register({
+        username: "user4",
+        password: "password4",
+        isAdmin: false
+    }));
+
+    testUsers[4] = (await User.register({
+        username: "user5",
+        password: "password5",
+        isAdmin: false
+    }));
+
+    testUsers[5] = (await User.register({
+        username: "user6",
+        password: "password6",
+        isAdmin: false
+    }));
+
+    testUsers[6] = (await User.register({
+        username: "user7",
+        password: "password7",
+        isAdmin: false
+    }));
+
+    testUsers[7] = (await User.register({
+        username: "user8",
+        password: "password8",
+        isAdmin: false
+    }));
+
+    testUsers[8] = (await User.register({
+        username: "user9",
+        password: "password9",
+        isAdmin: false
+    }));
+
+    testUsers[9] = (await User.register({
+        username: "user10",
+        password: "password10",
+        isAdmin: false
+    }));
+
+    testUsers[10] = (await User.register({
+        username: "user11",
+        password: "password11",
+        isAdmin: false
+    }));
+
     await User.blockUser(testUsers[0].username, testUsers[2].username);
 
     testGroupChats[0] = (await GroupChat.createGroupChat({
@@ -51,6 +100,22 @@ async function commonBeforeAll(){
         creatorToGuestList: testUsers[0]
     }));
 
+    testGroupChats[1] = (await GroupChat.createGroupChat({
+        title: "testGuest",
+        description: "testGuestLimit",
+        timestamp,
+        creator_id: testUsers[0].id,
+        creatorToGuestList: testUsers[0]
+    }));
+
+    // Add the max number of guests to this group chats's guest list
+    for(let i = 1; i < testUsers.length; i++){
+        await GroupChat.inviteGuest({
+            username: testUsers[i].username,
+            user_id: testUsers[i].id,
+            group_chat_id: testGroupChats[1].id
+        });
+    }
 };
 
 async function commonBeforeEach() {

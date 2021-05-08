@@ -122,7 +122,7 @@ async function ensureNotBlocked(req, res, next) {
     const user = res.locals.user;
     const username = req.params.username || req.body.username;
     const blocked = await User.checkBlockList(user.username, username);
-
+    
     if (blocked) {
       throw new NotFoundError("Username not found");
     }

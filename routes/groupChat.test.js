@@ -41,7 +41,16 @@ describe("GET /chat", () => {
             description: "test",
             timestamp: expect.any(String),
             creator_id: testUsers[0].id
-        }]});
+        },
+        {
+            id: expect.any(Number),
+            unique_id: expect.any(String),
+            title: "testGuest",
+            description: "testGuestLimit",
+            timestamp: expect.any(String),
+            creator_id: testUsers[0].id
+        }
+    ]});
     });
 
     test("throws unauthorized if anonymous", async () => {

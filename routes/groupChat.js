@@ -28,6 +28,7 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     // getInvitedGroupChats will take in user_id from res.locals
     // Returns group chats that the user is invited in
+    
     const groupChats = await GroupChat.getInvitedGroupChats(res.locals.user.user_id);
     return res.status(200).json({ groupChats });
   } catch (err) {
