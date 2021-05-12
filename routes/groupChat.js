@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn, ensureOnGuestList } = require("../auth");
+const { ensureLoggedIn, ensureOnGuestList, ensureCreatorOfGroupChat } = require("../auth");
 const GroupChat = require("../models/groupChat");
 
 const newGroupChatSchema = require("../schemas/groupChat.json");
@@ -28,8 +28,8 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     // getInvitedGroupChats will take in user_id from res.locals
     // Returns group chats that the user is invited in
-    
     const groupChats = await GroupChat.getInvitedGroupChats(res.locals.user.user_id);
+    
     return res.status(200).json({ groupChats });
   } catch (err) {
     return next(err);
@@ -63,7 +63,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
-/** GET /[id]
+/** GET /[unique_id]
  *
  * Gets specific group chat details using unique_id from params.
  *
@@ -76,6 +76,25 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, next) {
   try {
     const groupChat = await GroupChat.getGroupChat(req.params.id);
+    return res.status(200).json({ groupChat });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/** DELETE /[unique_id]
+ *
+ * Deletes group chat using unique_id from params.
+ *
+ * Returns { deletedGroupChat }
+ * 
+ * Authorization required: logged in, creator of group chat
+ *
+ */
+
+router.delete("/:id", ensureLoggedIn, ensureCreatorOfGroupChat, async function (req, res, next) {
+  try {
+    const groupChat = await GroupChat.deleteGroupChat(req.params.id);
     return res.status(200).json({ groupChat });
   } catch (err) {
     return next(err);
