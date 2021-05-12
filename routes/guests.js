@@ -28,18 +28,18 @@ const router = new express.Router();
 router.post("/:id", ensureLoggedIn, ensureCreatorOfGroupChat, ensureNotBlocked, async function (req, res, next) {
     try {
       const validator = jsonschema.validate(req.body, addGuestSchema);
-
+      
       if(!validator.valid){
         const errs = validator.errors.map(e => e.stack);
         throw new BadRequestError(errs)
       }
       const checkListLength = await GroupChat.checkListLength(req.body.group_chat_id);
-      console.log(checkListLength)
+      
       if(checkListLength >= 10) throw new BadRequestError("Guest list cannot exceed 10 users");
 
       const result = await GroupChat.inviteGuest(req.body);
 
-      return res.status(201).json({ result });
+      return res.status(201).json(result);
     } catch (err) {
       return next(err);
     }

@@ -146,3 +146,40 @@ describe("GET /chat/:unique_id", () => {
         expect(res.statusCode).toEqual(403);
     });
 });
+
+
+describe("DELETE /chat/:unique_id", () => {
+    test("works", async () => {
+        const userRes = await request(app).post("/auth/token")
+            .send({
+                username: testUsers[0].username,
+                password: "password1"
+            });
+
+        const res = await request(app).delete(`/chat/${testGroupChats[0].unique_id}`)
+            .set("authorization", `Bearer ${userRes.body.token}`);
+
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual({groupChat: {
+            id: expect.any(Number),
+            unique_id: expect.any(String),
+            title: "test",
+            description: "test",
+            timestamp: expect.any(String),
+            creator_id: testUsers[0].id
+        }});
+    });
+
+    test("throws unauthorized if anonymous", async () => {
+        const res = await request(app).delete(`/chat/${testGroupChats[0].unique_id}`);
+
+        expect(res.statusCode).toEqual(401)
+    });
+
+    test("throws forbidden if not creator of group chat", async () => {
+        const res = await request(app).delete(`/chat/${testGroupChats[0].unique_id}`)
+            .set("authorization", `Bearer ${user3Token}`);
+
+        expect(res.statusCode).toEqual(403);
+    });
+});

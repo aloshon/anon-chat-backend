@@ -37,7 +37,7 @@ describe("POST /guests/:group_chat_id", () => {
             .set("authorization", `Bearer ${userRes.body.token}`);
 
         expect(res.statusCode).toEqual(201);
-        expect(res.body).toEqual({result: {user_id: testUsers[1].id, username: testUsers[1].username, group_chat_id: testGroupChats[0].id}})
+        expect(res.body).toEqual({user_id: testUsers[1].id, username: testUsers[1].username, group_chat_id: testGroupChats[0].id})
     });
 
     test("guest list is limited to 10 users max", async () => {

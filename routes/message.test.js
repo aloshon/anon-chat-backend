@@ -64,7 +64,7 @@ describe("POST /message/:unique_id", () => {
             .set("authorization", `Bearer ${user1Token}`);
 
         expect(messageRes.statusCode).toEqual(200);
-        expect(messageRes.body).toEqual({ messages: [{id: expect.any(Number), message: "hello", user_id: testUsers[0].id, timestamp}]})
+        expect(messageRes.body).toEqual({ messages: [{id: expect.any(Number), message: "hello", user_id: testUsers[0].id, timestamp: expect.any(String)}]})
     });
 
     test("throws forbidden if not on the guest list", async () => {

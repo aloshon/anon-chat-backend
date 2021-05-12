@@ -26,7 +26,6 @@ const router = new express.Router();
 
 router.get("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, next) {
   try {
-    console.log(req.query)
     const messages = await GroupChat.getMessages(req.params.id, req.query.offset);
     return res.json({ messages });
   } catch (err) {

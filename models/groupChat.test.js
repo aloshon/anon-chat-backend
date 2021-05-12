@@ -1,9 +1,7 @@
 "use strict";
 
 const {
-  NotFoundError,
   BadRequestError,
-  UnauthorizedError,
 } = require("../expressError");
 const db = require("../db.js");
 const GroupChat = require("./groupChat.js");
@@ -24,8 +22,10 @@ afterAll(commonAfterAll);
 let currentGMT = new Date();
 const timestamp = currentGMT.toUTCString();
 
-/** TESTS THAT CHECK FOR DATA USING UNIQUE_ID CANNOT BE TESTED TO FAIL
- *  AS THE DB HAS RECORD OF ALL UNIQUE_ID'S AND WILL NOT TAKE A FALSE ONE
+/** 
+ * TESTS THAT CHECK FOR DATA USING UNIQUE_ID CANNOT BE TESTED TO FAIL
+ *  AS THE DB HAS RECORD OF ALL UNIQUE_ID'S 
+ *  AND WILL NOT TAKE A FAKE/EDITED ONE
  */
 
 describe("createGroupChat", () => {
@@ -43,7 +43,7 @@ describe("createGroupChat", () => {
             unique_id: expect.any(String),
             title: "test",
             description: "test",
-            timestamp,
+            timestamp: expect.any(String),
             creator_id: testUsers[0].id,
             
         });
@@ -79,7 +79,7 @@ describe("getGroupChat", () => {
             unique_id: expect.any(String),
             title: "test1",
             description: "testing",
-            timestamp,
+            timestamp: expect.any(String),
             creator_id: testUsers[0].id,
             guests: [{
                 user_id: expect.any(Number),
@@ -98,7 +98,7 @@ describe("getMessages", () => {
             id: expect.any(Number),
             message: "this is chat 1",
             user_id: testUsers[0].id,
-            timestamp
+            timestamp: expect.any(String)
         }]);
     });
 });
@@ -140,16 +140,6 @@ describe("checkListLength", () => {
         const res = await GroupChat.checkListLength(testGroupChats[0].id);
         expect(res).toEqual(1);
     });
-
-    // test("throws not found if group chat id is invalid", async () => {
-    //     try {
-    //         await GroupChat.checkListLength(0);
-    //         fail();
-
-    //     } catch(e) {
-    //         expect(e).toEqual(NotFoundError);
-    //     }
-    // });
 });
 
 
@@ -186,13 +176,12 @@ describe("getCreatorId", () => {
         const res = await GroupChat.getCreatorId(testGroupChats[0].unique_id);
         expect(res).toEqual(testUsers[0].id);
     });
-
-    // test("throws not found if group chat does not exist", async () => {
-    //     try {
-    //         await GroupChat.getCreatorId("248e630a-9e91-455d-b132-449cb7db157b");
-    //         fail();
-    //     } catch(e) {
-    //         expect(e instanceof NotFoundError).toBeTruthy();
-    //     }
-    // });
 });
+
+describe("deleteGroupChat", () => {
+    test("works", async () => {
+        const res = await GroupChat.deleteGroupChat(testGroupChats[1].unique_id);
+        expect(res).toEqual(expect.any(Object));
+        expect(res.description).toEqual("testing");
+    });
+})
