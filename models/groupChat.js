@@ -3,6 +3,9 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
+let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+twoDaysAgoUTC.toUTCString();
+
 /** Related functions for group chats. */
 
 class GroupChat {
@@ -48,7 +51,8 @@ class GroupChat {
   }
 
   /** Given a user id, return the group chats that have 
-   *  this user id in their guest list.
+   *  this user id in their guest list and that are
+   *  not older than 2 days
    *
    * Returns { gc.id, gc.title, gc.description, gc.timestamp,
    * gc.creator_id }
@@ -68,9 +72,10 @@ class GroupChat {
           gc.creator_id
           FROM group_chats AS "gc"
             RIGHT JOIN guests AS "g" ON gc.id = g.group_chat_id
-          WHERE g.user_id = $1
+          WHERE g.user_id = $1 AND
+          timestamp > $2
           ORDER BY gc.id ASC`,
-        [user_id]);
+        [user_id, twoDaysAgoUTC]);
     return groupChats.rows;
   }
 
@@ -235,10 +240,32 @@ return result.rows.length;
       WHERE unique_id = $1`,
     [unique_id]);
 
-    if(!creator_id) throw new NotFoundError(`Cannot find creator of group chat with this id ${unique_id}`);
+    if(!creator_id.rows) throw new NotFoundError(`Cannot find creator of group chat with this id ${unique_id}`);
 
     return creator_id.rows[0].creator_id;
   }
+
+  /** deleteGroupChat
+   * 
+   * data should be unique_id
+   * 
+   * Returns { deletedGroupChat }
+   * 
+   * Throws NotFoundError if no group chat found with unique_id
+   */
+
+   static async deleteGroupChat(unique_id) {
+     const deleted = await db.query(
+       `DELETE FROM group_chats
+       WHERE unique_id = $1
+       RETURNING *`,
+       [unique_id]
+     );
+
+     if(!deleted.rows) throw new NotFoundError(`Cannot find group chat with unique_id ${unique_id}`);
+
+     return deleted.rows[0];
+   }
 }
 
 
