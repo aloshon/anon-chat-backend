@@ -9,15 +9,10 @@ const testUsers = [];
 const testGroupChats = [];
 
 async function commonBeforeAll(){
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM group_chats");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM users");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM chat_messages");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM guests");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM block_list");
 
     let currentGMT = new Date();
@@ -25,69 +20,58 @@ async function commonBeforeAll(){
 
     testUsers[0] = (await User.register({
         username: "user1",
-        password: "password1",
-        isAdmin: false
+        password: "password1"
     }));
 
     testUsers[1] = (await User.register({
         username: "user2",
-        password: "password2",
-        isAdmin: false
+        password: "password2"
     }));
 
     testUsers[2] = (await User.register({
         username: "user3",
-        password: "password3",
-        isAdmin: false
+        password: "password3"
     }));
 
     // Extra users just to test that guests lists keep the 10 user limit
     testUsers[3] = (await User.register({
         username: "user4",
-        password: "password4",
-        isAdmin: false
+        password: "password4"
     }));
 
     testUsers[4] = (await User.register({
         username: "user5",
-        password: "password5",
-        isAdmin: false
+        password: "password5"
     }));
 
     testUsers[5] = (await User.register({
         username: "user6",
-        password: "password6",
-        isAdmin: false
+        password: "password6"
     }));
 
     testUsers[6] = (await User.register({
         username: "user7",
-        password: "password7",
-        isAdmin: false
+        password: "password7"
     }));
 
     testUsers[7] = (await User.register({
         username: "user8",
-        password: "password8",
-        isAdmin: false
+        password: "password8"
     }));
 
     testUsers[8] = (await User.register({
         username: "user9",
-        password: "password9",
-        isAdmin: false
+        password: "password9"
     }));
 
     testUsers[9] = (await User.register({
         username: "user10",
-        password: "password10",
-        isAdmin: false
+        password: "password10"
     }));
 
     testUsers[10] = (await User.register({
         username: "user11",
-        password: "password11",
-        isAdmin: false
+        password: "password11"
     }));
 
     await User.blockUser(testUsers[0].username, testUsers[2].username);
@@ -130,10 +114,9 @@ async function commonAfterAll() {
     await db.end();
 }
 
-const user1Token = createToken({ user_id: 1, username: "user1", isAdmin: false });
-const user2Token = createToken({ user_id: 2, username: "user2", isAdmin: false });
-const user3Token = createToken({ user_id: 3, username: "user3", isAdmin: false });
-const adminToken = createToken({ user_id: 4, username: "admin", isAdmin: true });
+const user1Token = createToken({ user_id: 1, username: "user1" });
+const user2Token = createToken({ user_id: 2, username: "user2" });
+const user3Token = createToken({ user_id: 3, username: "user3" });
 
 module.exports = {
     commonBeforeAll,
@@ -143,7 +126,6 @@ module.exports = {
     user1Token,
     user2Token,
     user3Token,
-    adminToken,
     testUsers,
     testGroupChats
 }

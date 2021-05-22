@@ -11,7 +11,8 @@ const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
-  commonAfterAll
+  commonAfterAll,
+  testUsers
 } = require("./testCommon");
 
 beforeAll(commonBeforeAll);
@@ -24,8 +25,7 @@ describe("authenticate", () => {
       const user = await User.authenticate({username: "user1", password: "password1"});
       expect(user).toEqual({
         id: expect.any(Number),
-        username: "user1",
-        isAdmin: false
+        username: "user1"
       });
     });
 
@@ -51,28 +51,13 @@ describe("authenticate", () => {
 
 describe("register", () => {
     test("works", async () => {
-        const testUser = await User.register({username: "test", password: "test", isAdmin: false});
+        const testUser = await User.register({username: "test", password: "test"});
         expect(testUser).toEqual({
             id: expect.any(Number),
-            username: "test",
-            isAdmin: false
+            username: "test"
         });
         const searchDB = await db.query("SELECT * FROM users WHERE username = 'test'");
         expect(searchDB.rows.length).toEqual(1);
-        expect(searchDB.rows[0].is_admin).toEqual(false);
-        expect(searchDB.rows[0].password.startsWith("$2b$")).toEqual(true);
-    });
-
-    test("works for adding admins", async () => {
-        const testUser = await User.register({username: "test", password: "test", isAdmin: true});
-        expect(testUser).toEqual({
-            id: expect.any(Number),
-            username: "test",
-            isAdmin: true
-        });
-        const searchDB = await db.query("SELECT * FROM users WHERE username = 'test'");
-        expect(searchDB.rows.length).toEqual(1);
-        expect(searchDB.rows[0].is_admin).toEqual(true);
         expect(searchDB.rows[0].password.startsWith("$2b$")).toEqual(true);
     });
 
@@ -80,13 +65,11 @@ describe("register", () => {
         try {
           await User.register({
             username: "test",
-            password: "password",
-            isAdmin: false
+            password: "password"
           });
           await User.register({
             username: "test",
-            password: "password",
-            isAdmin: false
+            password: "password"
           });
           fail();
         } catch (e) {
@@ -102,8 +85,8 @@ describe("get", () => {
         expect(user1).toEqual({
             id: expect.any(Number),
             username: "user1",
-            isAdmin: false,
-            blockList: []
+            blockList: [],
+            contactList: [expect.any(Object)]
         });
     });
 
@@ -176,7 +159,7 @@ describe("blockUser", () => {
         expect(checkDB.rows.length).toEqual(1);
     });
 
-    test("throws not found if either user is found", async () => {
+    test("throws not found if neither user is found", async () => {
         try {
             await User.blockUser("nope", "nada");
             fail();
@@ -194,9 +177,54 @@ describe("unblockUser", () => {
         expect(checkDB.rows.length).toEqual(0);
     });
 
-    test("throws not found if either user is found", async () => {
+    test("throws not found if either user is not found", async () => {
         try {
             await User.unblockUser("nope", "nada");
+            fail();
+        } catch(e) {
+            expect(e instanceof NotFoundError).toBeTruthy();
+        }
+    });
+});
+
+describe("addContact", () => {
+    test("works", async () => {
+        await User.addContact({
+                username: testUsers[1].username, 
+                nickname: "testing", 
+                owner_id: testUsers[0].id, 
+                user_id: testUsers[1].id
+            });
+        const checkDB = await db.query("SELECT * FROM contact_list WHERE nickname = 'testing'");
+        expect(checkDB.rows.length).toEqual(1);
+    });
+
+    test("throws not found if username is not found", async () => {
+        try {
+            await User.addContact({
+                username: "nope", 
+                nickname: "test", 
+                owner_id: 66, 
+                user_id: 43
+            });
+            fail();
+        } catch(e) {
+            expect(e instanceof NotFoundError).toBeTruthy();
+        }
+    });
+});
+
+
+describe("unblockUser", () => {
+    test("works", async () => {
+        await User.deleteContact(testUsers[0].id, testUsers[3].id);
+        const checkDB = await db.query("SELECT * FROM contact_list WHERE user_id = $1", [testUsers[3].id]);
+        expect(checkDB.rows.length).toEqual(0);
+    });
+
+    test("throws not found if either user is not found", async () => {
+        try {
+            await User.unblockUser(1, 2);
             fail();
         } catch(e) {
             expect(e instanceof NotFoundError).toBeTruthy();

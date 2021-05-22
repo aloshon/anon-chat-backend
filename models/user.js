@@ -15,7 +15,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { id, username, is_admin }
+   * Returns { id, username }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -25,8 +25,7 @@ class User {
     const result = await db.query(
           `SELECT id,
                   username,
-                  password,
-                  is_admin AS "isAdmin"
+                  password
            FROM users
            WHERE username = $1`,
         [username],
@@ -48,12 +47,12 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { id, username, isAdmin }
+   * Returns { id, username }
    *
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register({ username, password, isAdmin }) {
+  static async register({ username, password }) {
 
     const duplicateCheck = await db.query(
           `SELECT username
@@ -71,14 +70,12 @@ class User {
     const result = await db.query(
           `INSERT INTO users
            (username,
-            password,
-            is_admin)
-           VALUES ($1, $2, $3)
-           RETURNING id, username, is_admin AS "isAdmin"`,
+            password)
+           VALUES ($1, $2)
+           RETURNING id, username`,
         [
           username,
-          hashedPassword,
-          isAdmin
+          hashedPassword
         ],
     );
 
@@ -89,7 +86,7 @@ class User {
 
   /** Given a username, return user.
    *
-   * Returns { id, username, isAdmin, blockList: [{id, blocked_username}...] }
+   * Returns { id, username, blockList: [{id, blocked_username, blockList}...] }
    *
    * Throws NotFoundError if user not found.
    **/
@@ -97,8 +94,7 @@ class User {
   static async get(username) {
     const userRes = await db.query(
           `SELECT id, 
-            username,
-            is_admin AS "isAdmin"
+            username
            FROM users
            WHERE username = $1`,
         [username],
@@ -114,8 +110,18 @@ class User {
       WHERE username = $1`,
       [user.username]
     )
-    // set the user's block list to the one recevied from db or empty array
+
+    const contactList = await db.query(
+      `SELECT username,
+      nickname,
+      user_id
+      FROM contact_list
+      WHERE owner_id = $1`,
+      [user.id]
+    )
+    // set the user's block list and contact list to the one recevied from db or an empty array
     user.blockList = blockList.rows.length > 0 ? blockList.rows : [];
+    user.contactList = contactList.rows.length > 0 ? contactList.rows : [];
 
     return user;
   }
@@ -197,7 +203,7 @@ class User {
     );
 
     if (!checkUsernameExists.rows[0] || !checkUsernameToBlockExists.rows[0]) {
-      throw new NotFoundError(`No user found with username: ${username}`);
+      throw new NotFoundError(`No user found with username: ${blocked_username}`);
     }
 
     const result = await db.query(
@@ -225,6 +231,49 @@ class User {
     );
 
     if (!result.rows[0]) throw new NotFoundError(`User not found: ${blocked_username}`);
+
+    return result.rows[0];
+  }
+
+  /** Add contact to contact list */
+
+  static async addContact({username, nickname, owner_id, user_id}) {
+    const checkUsernameExists = await db.query(
+      `SELECT username
+       FROM users
+       WHERE username = $1`,
+      [username]
+    );
+
+    if (!checkUsernameExists.rows[0]) throw new NotFoundError(`Username not found ${username}`);
+
+    const result = await db.query(
+          `INSERT INTO contact_list
+            (username, nickname, owner_id, user_id)
+            VALUES ($1, $2, $3, $4)
+           RETURNING username,
+           nickname,
+           user_id`,
+        [username, nickname, owner_id, user_id],
+    );
+
+
+    return result.rows[0];
+  }
+
+  /** Remove contact from contact list */
+
+  static async deleteContact(owner_id, user_id) {
+
+    const result = await db.query(
+          `DELETE FROM contact_list
+            WHERE owner_id = $1
+            AND user_id = $2
+           RETURNING user_id`,
+        [owner_id, user_id],
+    );
+
+    if (!result.rows[0]) throw new NotFoundError(`Contact not found`);
 
     return result.rows[0];
   }

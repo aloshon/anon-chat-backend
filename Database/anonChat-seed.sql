@@ -1,7 +1,7 @@
-INSERT INTO users(username, password, is_admin)
-VALUES ('testuser1', 'testpassword', TRUE),
-    ('testuser2', 'testpassword2', FALSE),
-    ('aloshon', '$2b$12$fCYw0dz8QBR2dgEYNHzr/u288FzE8l0Hhw3QmpunetucHYQ7.LrE6', TRUE);
+INSERT INTO users(username, password)
+VALUES ('testuser1', 'testpassword'),
+    ('testuser2', 'testpassword2'),
+    ('aloshon', '$2b$12$fCYw0dz8QBR2dgEYNHzr/u288FzE8l0Hhw3QmpunetucHYQ7.LrE6');
 
 INSERT INTO group_chats(title, description, timestamp, creator_id)
 VALUES ('test1', 'testing description', '2021-04-08T19:03:24.317Z', 1),

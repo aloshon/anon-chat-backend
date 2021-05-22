@@ -10,13 +10,9 @@ let currentGMT = new Date();
 const timestamp = currentGMT.toUTCString();
 
 async function commonBeforeAll() {
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM group_chats");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM users");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM chat_messages");
-    // noinspection SqlWithoutWhere
     await db.query("DELETE FROM guests");
 
     const users = await db.query(`
@@ -24,12 +20,14 @@ async function commonBeforeAll() {
                             password)
           VALUES ('user1', $1),
                  ('user2', $2),
-                 ('user3', $3)
+                 ('user3', $3),
+                 ('user4', $4)
           RETURNING id, username`,
         [
           await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
           await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
-          await bcrypt.hash("password3", BCRYPT_WORK_FACTOR)
+          await bcrypt.hash("password3", BCRYPT_WORK_FACTOR),
+          await bcrypt.hash("password4", BCRYPT_WORK_FACTOR)
         ]);
         
     testUsers.splice(0, 0, ...users.rows.map(u => ({id: u.id, username: u.username})))
@@ -59,6 +57,11 @@ async function commonBeforeAll() {
     await db.query(`
         INSERT INTO block_list(blocked_username, username)
         VALUES('user1', 'user3')`);
+
+    await db.query(`
+        INSERT INTO contact_list(username, nickname, owner_id, user_id)
+        VALUES('user4', 'test', $1, $2)`,
+        [testUsers[0].id, testUsers[3].id]);
 
   }
   

@@ -11,7 +11,7 @@ const {
   commonAfterAll,
   user1Token,
   user2Token,
-  adminToken
+  user3Token
 } = require("./testCommon");
 
 beforeAll(commonBeforeAll);
@@ -28,8 +28,8 @@ describe("GET /users/:username", () => {
             user: {
                 id: expect.any(Number),
                 username: "user1",
-                isAdmin: false,
-                blockList: []
+                blockList: [],
+                contactList: []
             }
         });
     });
@@ -84,85 +84,9 @@ describe("GET /users/:username/check", () => {
 
     test("throws not found if user does not exist", async () => {
         const res = await request(app).get("/users/bruh/check")
-            .set("authorization", `Bearer ${user1Token}`)
+            .set("authorization", `Bearer ${user3Token}`)
         
         expect(res.statusCode).toEqual(404);
-    });
-});
-
-
-describe("POST, /users", () => {
-    test("admins can create non-admin users", async () => {
-        const res = await request(app).post("/users/")
-            .send({
-                username: "newNonAdmin",
-                password: "thisisnew00",
-                isAdmin: false
-            })
-            .set("authorization", `Bearer ${adminToken}`);
-
-        expect(res.statusCode).toEqual(201);
-        expect(res.body).toEqual({
-            user: {
-                id: expect.any(Number),
-                username: "newNonAdmin",
-                isAdmin: false
-            }, token: expect.any(String)
-        });
-    });
-
-    test("admins can create other admins", async () => {
-        const res = await request(app).post("/users/")
-            .send({
-                username: "newAdmin",
-                password: "thisisnew99",
-                isAdmin: true
-            })
-            .set("authorization", `Bearer ${adminToken}`);
-
-        expect(res.statusCode).toEqual(201);
-        expect(res.body).toEqual({
-            user: {
-                id: expect.any(Number),
-                username: "newAdmin",
-                isAdmin: true
-            }, token: expect.any(String)
-        });
-    });
-
-    test("throws unauthorized is normal user tries use this", async () => {
-        const res = await request(app).post("/users/")
-            .send({
-                username: "newAdmin",
-                password: "thisisnew99",
-                isAdmin: true
-            })
-            .set("authorization", `Bearer ${user1Token}`);
-
-        expect(res.statusCode).toEqual(401);
-    });
-
-    test("throws bad request if missing data", async () => {
-        const res = await request(app).post("/users/")
-            .send({
-                password: "thisisnew99",
-                isAdmin: true
-            })
-            .set("authorization", `Bearer ${adminToken}`);
-
-        expect(res.statusCode).toEqual(400);
-    });
-
-    test("throws bad request if data is invalid", async () => {
-        const res = await request(app).post("/users/")
-            .send({
-                username: 4040,
-                password: "thisisnew99",
-                isAdmin: {}
-            })
-            .set("authorization", `Bearer ${adminToken}`);
-
-        expect(res.statusCode).toEqual(400);
     });
 });
 

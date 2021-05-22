@@ -12,7 +12,7 @@ const User = require("./models/user");
 /** Middleware: Authenticate user.
  *
  * If a token was provided, verify it, and, if valid, store the token payload
- * on res.locals (this will include the username and isAdmin field.)
+ * on res.locals (this will include the username and user_id.)
  * 
  * authHeader is declared as the following: is req.headers is not definded or falsy,
  * then authHeader is not defined or falsy. However if there is a req.headers,
@@ -44,30 +44,12 @@ function authenticateJWT(req, res, next) {
 function ensureLoggedIn(req, res, next) {
   try {
     if (!res.locals.user) throw new UnauthorizedError();
-    
+
     return next();
   } catch (err) {
     return next(err);
   }
 }
-
-
-/** Middleware to use when they be logged in as an admin user.
- *
- *  If not, raises Unauthorized.
- */
-
-function ensureAdmin(req, res, next) {
-  try {
-    if (!res.locals.user || !res.locals.user.isAdmin) {
-      throw new UnauthorizedError();
-    }
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-}
-
 
 /** Middleware to use when they must provide a valid token, and username must be
  * on the guest list using the unique_id provided as a route param.
@@ -79,7 +61,7 @@ async function ensureOnGuestList(req, res, next) {
   try {
     const groupChat = await GroupChat.getGroupChat(req.params.id);
     const isInvited = groupChat.guests.find(g => g.username === res.locals.user.username);
-    
+  
     if(!isInvited){
       throw new ForbiddenError("Not invited in this group chat!")
     }
@@ -136,7 +118,6 @@ async function ensureNotBlocked(req, res, next) {
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureAdmin,
   ensureOnGuestList,
   ensureCreatorOfGroupChat,
   ensureNotBlocked

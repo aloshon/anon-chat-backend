@@ -15,6 +15,7 @@ const usersRoutes = require("./routes/users");
 const groupChatRoutes = require("./routes/groupChat");
 const guestsRoutes = require("./routes/guests");
 const blockRoutes = require("./routes/blockList");
+const contactRoutes = require("./routes/contactList");
 
 const morgan = require("morgan");
 
@@ -25,14 +26,13 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
-
 app.use("/message", messageRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/chat", groupChatRoutes);
 app.use("/guests", guestsRoutes);
 app.use("/block", blockRoutes);
-
+app.use("/contact", contactRoutes);
 
 /** Handle websocket chat */
 
@@ -42,11 +42,8 @@ const expressWs = require('express-ws')(app);
 
 /** Handle a persistent connection to /chat/[roomId]
  *
- * Note that this is only called *once* per client --- not every time
+ * Only called once per client, not every time
  * a particular websocket chat is sent.
- *
- * `ws` becomes the socket for the client; it is specific to that visitor.
- * The `ws.send` method is how we'll send messages back to that socket.
  */
 
 app.ws('/chat/:roomId', async function(ws, req, next) {
@@ -55,9 +52,7 @@ app.ws('/chat/:roomId', async function(ws, req, next) {
     // register handlers for message-received, connection-opened, connection-closed
     ws.on('open', function() {
       try {
-        
-        // this is where we would try to seed 
-        // the groupchat with older messages
+
         console.log("OPENED FROM THE SERVER BACKEND APP.JS");
 
       } catch (err) {
@@ -73,7 +68,7 @@ app.ws('/chat/:roomId', async function(ws, req, next) {
             client.send(data)
           }
         })
-        console.log(`MESSAGE FROM THE CLIENT FRONTEND CLIENT.JS ${data}`)
+        console.log("MESSAGE SENT")
       } catch (err) {
         console.error(err);
       }
@@ -107,5 +102,6 @@ app.use(function (err, req, res, next) {
     error: { message, status },
   });
 });
+
 
 module.exports = app;

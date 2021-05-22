@@ -1,8 +1,7 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(30) UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    is_admin BOOLEAN NOT NULL DEFAULT FALSE
+    password TEXT NOT NULL
 );
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -40,4 +39,14 @@ CREATE TABLE block_list (
     id SERIAL PRIMARY KEY,
     blocked_username TEXT,
     username TEXT
+);
+
+CREATE TABLE contact_list (
+    id SERIAL PRIMARY KEY,
+    username TEXT,
+    nickname TEXT,
+    owner_id INTEGER
+      REFERENCES users ON DELETE CASCADE,
+    user_id INTEGER
+      REFERENCES users ON DELETE CASCADE
 );

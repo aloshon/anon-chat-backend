@@ -11,8 +11,7 @@ const {
   commonAfterAll,
   user1Token,
   user2Token,
-  user3Token,
-  adminToken
+  user3Token
 } = require("./testCommon");
 
 beforeAll(commonBeforeAll);
@@ -47,7 +46,7 @@ describe("POST /block/:username", () => {
 
     test("throws not found if user doesn't exist", async () => {
         const res = await request(app).post("/block/dude-no")
-            .set("authorization", `Bearer ${adminToken}`)
+            .set("authorization", `Bearer ${user3Token}`)
 
         expect(res.statusCode).toEqual(404)
     });
@@ -90,7 +89,7 @@ describe("DELETE /block/:username", () => {
 
     test("throws not found if user doesn't exist", async () => {
         const res = await request(app).delete("/block/dude-no")
-            .set("authorization", `Bearer ${adminToken}`)
+            .set("authorization", `Bearer ${user3Token}`)
 
         expect(res.statusCode).toEqual(404)
     });

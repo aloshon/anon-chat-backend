@@ -11,8 +11,7 @@ const {
   commonAfterAll,
   testUsers,
   user1Token,
-  user2Token,
-  user3Token
+  user2Token
 } = require("./testCommon");
 
 beforeAll(commonBeforeAll);

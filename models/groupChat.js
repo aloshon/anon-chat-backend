@@ -73,7 +73,7 @@ class GroupChat {
           FROM group_chats AS "gc"
             RIGHT JOIN guests AS "g" ON gc.id = g.group_chat_id
           WHERE g.user_id = $1 AND
-          timestamp > $2
+          gc.timestamp > $2
           ORDER BY gc.id ASC`,
         [user_id, twoDaysAgoUTC]);
     return groupChats.rows;
@@ -114,8 +114,10 @@ class GroupChat {
   }
 
   /** Given a unique_id and offset get messages from group chat.
+   * 
    * Offset will be the amount of messages that the user already
    * has loaded, so do not ask for them again.
+   * 
    * fetchAmt is the amount of rows we want to fetch,
    * hard coded to 25. 
    *
