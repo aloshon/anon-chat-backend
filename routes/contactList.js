@@ -6,7 +6,7 @@ const router = new express.Router();
 const {ensureLoggedIn, ensureNotBlocked} = require("../auth");
 const jsonschema = require("jsonschema");
 const addContactSchema = require("../schemas/contact.json");
-const { BadRequestError } = require("../ExpressError");
+const { BadRequestError } = require("../expressError");
 
 /** POST 
  *
