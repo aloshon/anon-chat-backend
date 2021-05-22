@@ -23,7 +23,8 @@
             "type": "string"
         },
         "message": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 300
         },
         "user_id": {
             "type": "integer"  
