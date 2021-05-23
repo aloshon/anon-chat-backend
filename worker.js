@@ -22,6 +22,7 @@ const deleteOldGroupChats = async () => {
     await db.query(
         `DELETE FROM group_chats WHERE timestamp < $1`,[twoDaysAgoUTC]
     );
+    console.log("DID IT WORK?")
 }
 
 deleteOldMessages();
