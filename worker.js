@@ -6,9 +6,10 @@ twoDaysAgoUTC.toUTCString();
 console.log("DID IT WORK?1")
 const deleteOldMessages = async () => {
     console.log("DID IT WORK?2")
-    await db.query(
+    const res = await db.query(
         `DELETE FROM chat_messages WHERE timestamp < $1`,[twoDaysAgoUTC]
     );
+    console.log(res.rows);
 }
 
 const deleteOldGuests = async () => {
