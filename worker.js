@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-const db = require("../db");
+const db = require("./db");
 
 let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
 twoDaysAgoUTC.toUTCString();
-
+console.log("DID IT WORK?1")
 const deleteOldMessages = async () => {
+    console.log("DID IT WORK?2")
     await db.query(
         `DELETE FROM chat_messages WHERE timestamp < $1`,[twoDaysAgoUTC]
     );
@@ -23,9 +24,9 @@ const deleteOldGroupChats = async () => {
     await db.query(
         `DELETE FROM group_chats WHERE timestamp < $1`,[twoDaysAgoUTC]
     );
-    console.log("DID IT WORK?")
+    console.log("DID IT WORK?3")
 }
-
+console.log("DID IT WORK?4")
 deleteOldMessages();
 deleteOldGuests();
 deleteOldGroupChats();
