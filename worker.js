@@ -1,29 +1,31 @@
 #!/usr/bin/env node
-// const deleteOldData = require("./cleaner");
 const db = require("./db");
 const deleteOldData = async () => {
-    let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-    twoDaysAgoUTC.toUTCString();
     console.log("DID IT WORK?1")
+    let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
     const res = await db.query(
-        `DELETE FROM chat_messages WHERE timestamp < $1`,[twoDaysAgoUTC]
+        `DELETE FROM chat_messages WHERE timestamp < $1
+        RETURNING user_id`,[twoDaysAgoUTC.toUTCString()]
     );
+    console.log(twoDaysAgoUTC.toUTCString())
     console.log(res.rows);
 
-    await db.query(
-        `DELETE FROM guests
-        WHERE group_chat_id IN (
-            SELECT group_chat_id FROM group_chats
-            WHERE timestamp < $1
-        )`,[twoDaysAgoUTC]
+    const gRes = await db.query(
+        `DELETE FROM guests AS "g"
+        USING group_chats AS "gc" WHERE
+        g.group_chat_id = gc.id
+        AND gc.timestamp < $1
+        RETURNING g.user_id, gc.timestamp`,[twoDaysAgoUTC.toUTCString()]
     );
+    console.log(gRes.rows);
 
     const gcRes = await db.query(
-        `DELETE FROM group_chats WHERE timestamp < $1`,[twoDaysAgoUTC]
+        `DELETE FROM group_chats WHERE timestamp < $1
+        RETURNING id`,[twoDaysAgoUTC.toUTCString()]
     );
-    console.log(gcRes.rows)
+    console.log(gcRes.rows);
 
-    console.log("DID IT ALL WORK THO??");
+    console.log("DID IT ALL WORK THO??")
 
     process.exit();
 }

@@ -4,7 +4,6 @@ const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
 let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-twoDaysAgoUTC.toUTCString();
 
 /** Related functions for group chats. */
 
@@ -75,7 +74,7 @@ class GroupChat {
           WHERE g.user_id = $1 AND
           gc.timestamp > $2
           ORDER BY gc.id ASC`,
-        [user_id, twoDaysAgoUTC]);
+        [user_id, twoDaysAgoUTC.toUTCString()]);
     return groupChats.rows;
   }
 
