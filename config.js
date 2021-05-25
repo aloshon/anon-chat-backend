@@ -1,6 +1,6 @@
 "use strict";
 
-/** Shared config for application; can be required many places. */
+/** Shared config for application */
 
 require("dotenv").config();
 require("colors");
