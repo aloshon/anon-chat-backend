@@ -20,8 +20,6 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-let currentGMT = new Date();
-const timestamp = currentGMT.toUTCString();
 
 describe("GET /message/:unique_id", () => {
     test("works", async () => {
@@ -54,8 +52,8 @@ describe("POST /message/:unique_id", () => {
                 unique_id: testGroupChats[0].unique_id,
                 message: "hello", 
                 user_id: testUsers[0].id, 
-                group_chat_id: testGroupChats[0].id, 
-                timestamp})
+                group_chat_id: testGroupChats[0].id
+                })
             .set("authorization", `Bearer ${user1Token}`)
 
         expect(res.statusCode).toEqual(201);
@@ -73,8 +71,8 @@ describe("POST /message/:unique_id", () => {
                 unique_id: testGroupChats[0].unique_id,
                 message: "hello", 
                 user_id: testUsers[2].id, 
-                group_chat_id: testGroupChats[0].id, 
-                timestamp})
+                group_chat_id: testGroupChats[0].id
+                })
             .set("authorization", `Bearer ${user3Token}`);
 
         expect(res.statusCode).toEqual(403);
@@ -86,8 +84,8 @@ describe("POST /message/:unique_id", () => {
                 unique_id: testGroupChats[0].unique_id,
                 message: "hello", 
                 user_id: testUsers[0].id, 
-                group_chat_id: testGroupChats[0].id, 
-                timestamp});
+                group_chat_id: testGroupChats[0].id
+                });
 
         expect(res.statusCode).toEqual(401);
     });

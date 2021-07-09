@@ -7,16 +7,14 @@
             "unique_id": "b2ec2167-6611-429d-8877-20727850022a",
             "message": "examplemessage",
             "user_id": 1,
-            "group_chat_id": 1,
-            "timestamp": "Fri, 19 Mar 2021 13:41:33 GMT"
+            "group_chat_id": 1
         }
     ],
     "required": [
         "unique_id",
         "message",
         "user_id",
-        "group_chat_id",
-        "timestamp"
+        "group_chat_id"
     ],
     "properties": {
         "unique_id": {
@@ -31,9 +29,6 @@
         },
         "group_chat_id": {
             "type": "integer"
-        },
-        "timestamp": {
-            "type": "string"
         }
     },
     "additionalProperties": false

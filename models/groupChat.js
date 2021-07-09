@@ -3,31 +3,32 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
-let twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+// const twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toUTCString();
+// const twoDaysAgoUTC = currentTime.toUTCString();
+
 
 /** Related functions for group chats. */
 
 class GroupChat {
   /** Create a group chat, update the database, and return its values.
    *
-   * data should be { title, timestamp, creator_id }
+   * data should be { title, description, creator_id }
    *
    * Returns { id, unique_id, title, timestamp, creator_id }
    *
    * Throws BadRequestError if an error occurred.
    * */
 
-  static async createGroupChat({ title, description, timestamp, creator_id, creatorToGuestList }) {
+  static async createGroupChat({ title, description, creator_id, creatorToGuestList }) {
     try {
       const result = await db.query(
         `INSERT INTO group_chats
-         (title, description, timestamp, creator_id)
-         VALUES ($1, $2, $3, $4)
+         (title, description, creator_id)
+         VALUES ($1, $2, $3)
          RETURNING *`,
       [
         title,
         description,
-        timestamp,
         creator_id
       ]);
 
@@ -72,9 +73,9 @@ class GroupChat {
           FROM group_chats AS "gc"
             RIGHT JOIN guests AS "g" ON gc.id = g.group_chat_id
           WHERE g.user_id = $1 AND
-          gc.timestamp > $2
+          DATE(gc.timestamp) > (NOW() at time zone 'utc')::timestamptz - INTERVAL '2 DAY'
           ORDER BY gc.id ASC`,
-        [user_id, twoDaysAgoUTC.toUTCString()]);
+        [user_id]);
     return groupChats.rows;
   }
 
@@ -144,8 +145,7 @@ class GroupChat {
   }
 
   /** Post a message to group chat.
-   * 
-   * Data should be { message, user_id, group_chat_id, timestamp }
+   * Data should be { message, user_id, group_chat_id }
    *
    * If no errors occurred
    *  Returns { message: "successs" }
@@ -159,14 +159,13 @@ class GroupChat {
         `INSERT INTO chat_messages 
             (message,
             user_id,
-            group_chat_id,
-            timestamp)
-         VALUES ($1, $2, $3, $4)`,
+            group_chat_id
+          )
+         VALUES ($1, $2, $3)`,
       [
         data.message,
         data.user_id,
-        data.group_chat_id,
-        data.timestamp,
+        data.group_chat_id
       ]);
       return {message: "success"};
     } catch(e){

@@ -37,7 +37,7 @@ router.get("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, 
  *
  * Sends chat message to database for future members to see.
  *
- * fields must be: { unique_id, message, user_id, group_chat_id, timestamp }
+ * fields must be: { unique_id, message, user_id, group_chat_id }
  * Gets unique_id from params, gets group chat from database, 
  * checks guest list to find the logged in user's username.
  * If not in guest list throw error.
@@ -51,7 +51,7 @@ router.get("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, 
 router.post("/:id", ensureLoggedIn, ensureOnGuestList, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, addMessageSchema)
-
+  
     if(!validator.valid){
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);

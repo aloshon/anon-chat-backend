@@ -19,8 +19,6 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-let currentGMT = new Date();
-const timestamp = currentGMT.toUTCString();
 
 describe("GET /chat", () => {
     test("works", async () => {
@@ -73,7 +71,6 @@ describe("POST /chat", () => {
             .send({
                 title: "testing",
                 description: "this is a test",
-                timestamp,
                 creator_id: testUsers[0].id,
                 creatorToGuestList: testUsers[0]
             })
@@ -95,7 +92,6 @@ describe("POST /chat", () => {
             .send({
                 title: "testing",
                 description: "this is a test",
-                timestamp,
                 creator_id: testUsers[0].id,
                 creatorToGuestList: testUsers[0]
             });

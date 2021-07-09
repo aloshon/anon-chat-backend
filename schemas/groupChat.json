@@ -6,7 +6,6 @@
         {
             "title": "exampletitle",
             "description": "exampledescription",
-            "timestamp": "Thu, 18 Mar 2021 13:41:33 GMT",
             "creator_id": 1,
             "creatorToGuestList": {
                 "username": "exampleusername",
@@ -18,7 +17,6 @@
     "required": [
         "title",
         "description",
-        "timestamp",
         "creator_id",
         "creatorToGuestList"
     ],
@@ -33,9 +31,6 @@
             "minLength": 1,
             "maxLength": 400
             
-        },
-        "timestamp": {
-            "type": "string"
         },
         "creator_id": {
             "type": "integer"
