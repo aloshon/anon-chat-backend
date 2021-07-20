@@ -11,13 +11,9 @@ const User = require("./models/user");
 
 /** Middleware: Authenticate user.
  *
- * If a token was provided, verify it, and, if valid, store the token payload
+ * If a token was provided, verify it, and if valid store the payload
  * on res.locals (this will include the username and user_id.)
  * 
- * authHeader is declared as the following: is req.headers is not definded or falsy,
- * then authHeader is not defined or falsy. However if there is a req.headers,
- * then it will be req.headers.authorization. Which is s string `Bearer ${token}`
- *
  * Not an error if no token was provided or if the token is not valid, just log it
  */
 
@@ -94,7 +90,7 @@ async function ensureCreatorOfGroupChat(req, res, next) {
 }
 
 /** Middleware to use when they must provide a valid token & user must not
- *  be blocked by other user provided by req.body.
+ *  be blocked by other user provided by req.body or req.params.
  *
  *  If the 2 usernames are on the list, raises NotFoundError.
  */

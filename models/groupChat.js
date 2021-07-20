@@ -3,10 +3,6 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 
-// const twoDaysAgoUTC = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toUTCString();
-// const twoDaysAgoUTC = currentTime.toUTCString();
-
-
 /** Related functions for group chats. */
 
 class GroupChat {

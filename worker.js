@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const db = require("./db");
+/** Delete group chat data older than 2 days */
 const deleteOldData = async () => {
     await db.query(
         `DELETE FROM chat_messages WHERE DATE(timestamp) < (NOW() at time zone 'utc')::timestamptz - INTERVAL '2 DAY'`

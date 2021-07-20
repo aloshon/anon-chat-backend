@@ -2,6 +2,10 @@
  *  add a status when we make an instance of it.
  *
  *  The error-handling middleware will return this.
+ * 
+ *  We make a version of each error by extending ExpressError
+ *  and passing a default message and status code
+ *  We can also edit error messages as we like
  */
 
 class ExpressError extends Error {
