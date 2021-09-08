@@ -11,6 +11,7 @@ const User = require("./models/user");
 
 /** Middleware: Authenticate user.
  *
+ * Check if user is logged in
  * If a token was provided, verify it, and if valid store the payload
  * on res.locals (this will include the username and user_id.)
  * 

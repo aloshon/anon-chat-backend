@@ -83,7 +83,12 @@ describe("POST /chat", () => {
             description: "this is a test",
             timestamp: expect.any(String),
             creator_id: testUsers[0].id,
-            unique_id: expect.any(String)
+            unique_id: expect.any(String),
+            guests: [{
+                group_chat_id: expect.any(Number),
+                user_id: expect.any(Number),
+                username: "user1",
+            }]
         }});
     });
 

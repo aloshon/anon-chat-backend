@@ -29,10 +29,11 @@ class GroupChat {
       ]);
 
       // add the user who created the group chat to the guest list
-      await db.query(
+      const guests = await db.query(
         `INSERT INTO guests
         (username, user_id, group_chat_id)
-        VALUES ($1, $2, $3)`,
+        VALUES ($1, $2, $3)
+        RETURNING *`,
         [
           creatorToGuestList.username,
           creatorToGuestList.id,
@@ -40,7 +41,9 @@ class GroupChat {
         ]
       )
 
-    return result.rows[0]
+      result.rows[0].guests = guests.rows;
+
+    return result.rows[0];
     } catch(e){
       throw new BadRequestError(`Error creating group chat. Please try again later: ${e}`);
     }
@@ -202,7 +205,7 @@ class GroupChat {
   *
   * data should be group_chat_id
   *
-  * Returns [id, ...]
+  * Returns [username, ...]
   *
   * Throws Not Found if no guests are found.
   * */
@@ -214,7 +217,7 @@ class GroupChat {
     WHERE group_chat_id = $1`,
   [group_chat_id]);
 
-  if(!result.rows.length) throw new NotFoundError(`Cannot find group chat with id of ${unique_id}`);
+  if(!result.rows.length) throw new NotFoundError(`Cannot find group chat with id of ${group_chat_id}`);
 
 return result.rows.length;
 

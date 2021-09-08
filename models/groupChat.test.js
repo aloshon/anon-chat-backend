@@ -45,7 +45,11 @@ describe("createGroupChat", () => {
             description: "test",
             timestamp: expect.any(String),
             creator_id: testUsers[0].id,
-            
+            guests: [{
+                group_chat_id: expect.any(Number),
+                user_id: expect.any(Number),
+                username: "user1",
+            }]
         });
     });
 
