@@ -6,6 +6,11 @@ Technologies Used:
     - Express with Node for fleible error handling and easy interaction with frontend since both use Javascript
     - Postgres (pg) for storing data like user info, group chats, messages, etc. in a database
 
+### To start database:
+    - have postgres install and started
+    - cd into anon-chat-backend
+    - run `node database/anonChat.sql`
+
 After all packages have been installed use the command `npm start` to run the app in development mode and on localhost:3001.
 ## Available Scripts
 
