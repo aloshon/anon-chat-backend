@@ -26,7 +26,7 @@ const app = express();
 // }));
 app.use(cors({
   methods: ['GET','POST','DELETE'],
-  origin: "*"
+  origin: "http://anonchat.surge.sh"
 }));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
