@@ -37,6 +37,10 @@ app.use("/chat", groupChatRoutes);
 app.use("/guests", guestsRoutes);
 app.use("/block", blockRoutes);
 app.use("/contact", contactRoutes);
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://anonchat.surge.sh");
+  next();
+});
 app.get('/', function (req, res) {
   return res.status(200).json("OK");
 });
