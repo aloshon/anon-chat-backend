@@ -48,6 +48,7 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
+    console.log(req.body);
     const validator = jsonschema.validate(req.body, newGroupChatSchema)
 
     if(!validator.valid){
