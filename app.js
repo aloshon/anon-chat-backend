@@ -23,7 +23,6 @@ const app = express();
 
 app.use(cors({
   methods: "GET,POST,DELETE",
-  origin: ["http://anonchat.surge.sh"]
 }));
 
 app.use(express.json());
