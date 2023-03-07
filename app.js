@@ -24,10 +24,27 @@ const app = express();
 // app.options('*', cors({
 //   methods: "GET,POST,DELETE",
 // }));
-app.use(cors({
-  methods: ['GET','POST','DELETE'],
-  origin: "http://anonchat.surge.sh"
-}));
+// app.use(cors({
+//   methods: ['GET','POST','DELETE'],
+//   origin: "*"
+// }));
+//Cors Configuration - Start
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested, Content-Type, Accept Authorization"
+  )
+  if (req.method === "OPTIONS") {
+    res.header(
+      "Access-Control-Allow-Methods",
+      "POST, GET, DELETE"
+    )
+    return res.status(200).json({})
+  }
+  next()
+})
+//Cors Configuration - End
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
