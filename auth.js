@@ -22,7 +22,7 @@ function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
  
-    if (authHeader) {
+    if (authHeader && authHeader !== undefined) {
       console.log(req.headers.authorization);
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
       console.log(token);
