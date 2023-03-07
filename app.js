@@ -25,8 +25,7 @@ const app = express();
 //   methods: "GET,POST,DELETE",
 // }));
 app.use(cors({
-  methods: "GET,POST,DELETE",
-  "preflightContinue": true,
+  methods: ['GET','POST','DELETE'],
   origin: "*"
 }));
 
