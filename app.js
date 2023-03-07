@@ -36,6 +36,9 @@ app.use("/chat", groupChatRoutes);
 app.use("/guests", guestsRoutes);
 app.use("/block", blockRoutes);
 app.use("/contact", contactRoutes);
+app.get('/',function (req, res) {
+  return res.status(200);
+});
 
 /** Handle websocket chat */
 
