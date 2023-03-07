@@ -29,7 +29,13 @@ const app = express();
 //   origin: "*"
 // }));
 //Cors Configuration - Start
-app.use(cors({ origin: "*", credentials: true }));
+app.use(express.json());
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 //Cors Configuration - End
 // app.use(function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -37,7 +43,6 @@ app.use(cors({ origin: "*", credentials: true }));
 //   next();
 // });
 
-app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
 
