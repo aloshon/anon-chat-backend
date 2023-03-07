@@ -22,11 +22,11 @@ function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
  
-    if (authHeader && authHeader !== undefined) {
+    if (authHeader) {
       console.log(req.headers.authorization);
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
       console.log(token);
-      res.locals.user = jwt.verify(token, SECRET_KEY);
+      token !== undefined && (res.locals.user = jwt.verify(token, SECRET_KEY));
       console.log(res.locals.user);
     }
     return next();
