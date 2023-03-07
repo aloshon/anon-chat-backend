@@ -29,7 +29,7 @@ const app = express();
 //   origin: "*"
 // }));
 //Cors Configuration - Start
-app.use(cors({ origin: true }));
+app.use(cors({ origin: "*", credentials: true }));
 //Cors Configuration - End
 // app.use(function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
