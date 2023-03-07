@@ -27,6 +27,7 @@ app.use(express.json());
 app.use(cors({
   methods: ['GET','POST','DELETE'],
   origin: "http://anonchat.surge.sh",
+  "Access-Control-Allow-Credentials": true,
 }));
 //Cors Configuration - Start
 
