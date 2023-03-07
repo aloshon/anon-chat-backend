@@ -11,7 +11,7 @@ CREATE TABLE group_chats (
     unique_id uuid UNIQUE DEFAULT UUID_GENERATE_V4(),
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    timestamp TEXT NOT NULL,
+    timestamp TEXT NOT NULL default current_timestamp,
     creator_id INTEGER
       REFERENCES users ON DELETE CASCADE
 );
@@ -32,7 +32,7 @@ CREATE TABLE chat_messages (
       REFERENCES users ON DELETE CASCADE,
     group_chat_id INTEGER
       REFERENCES group_chats ON DELETE CASCADE,
-    timestamp TEXT NOT NULL
+    timestamp TEXT NOT NULL default current_timestamp
 );
 
 CREATE TABLE block_list (
