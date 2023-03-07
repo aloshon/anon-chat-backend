@@ -20,16 +20,16 @@ const contactRoutes = require("./routes/contactList");
 const morgan = require("morgan");
 
 const app = express();
-
+app.use(express.json());
 // app.options('*', cors({
 //   methods: "GET,POST,DELETE",
 // }));
 app.use(cors({
   methods: ['GET','POST','DELETE'],
-  origin: "*"
+  origin: "http://anonchat.surge.sh",
 }));
 //Cors Configuration - Start
-app.use(express.json());
+
 // app.use(function (req, res, next) {
 //   res.setHeader('Access-Control-Allow-Origin', '*');
 //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
