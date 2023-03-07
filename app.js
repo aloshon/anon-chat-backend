@@ -24,18 +24,18 @@ const app = express();
 // app.options('*', cors({
 //   methods: "GET,POST,DELETE",
 // }));
-// app.use(cors({
-//   methods: ['GET','POST','DELETE'],
-//   origin: "*"
-// }));
+app.use(cors({
+  methods: ['GET','POST','DELETE'],
+  origin: "*"
+}));
 //Cors Configuration - Start
 app.use(express.json());
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE');
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+//   next();
+// });
 //Cors Configuration - End
 // app.use(function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");
