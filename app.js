@@ -29,7 +29,7 @@ app.use(cors({
   origin: "http://anonchat.surge.sh",
   "Access-Control-Allow-Credentials": true,
 }));
-//Cors Configuration - Start
+//Cors Configuration - Start 
 
 // app.use(function (req, res, next) {
 //   res.setHeader('Access-Control-Allow-Origin', '*');
