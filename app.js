@@ -4,6 +4,8 @@
 
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
+const {Server}= require("socket.io");
 
 const { NotFoundError } = require("./expressError");
 
@@ -20,13 +22,19 @@ const contactRoutes = require("./routes/contactList");
 const morgan = require("morgan");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  }
+});
 app.use(express.json());
 // app.options('*', cors({
 //   methods: "GET,POST,DELETE",
 // }));
 app.use(cors({
   methods: ['GET','POST','DELETE'],
-  origin: "http://anonchat.surge.sh",
+  origin: "*",
   "Access-Control-Allow-Credentials": true,
 }));
 //Cors Configuration - Start 
@@ -61,51 +69,28 @@ app.use("/contact", contactRoutes);
 
 /** Handle websocket chat */
 
-// allow for app.ws routes for websocket routes
-// easy to make websocket routes in express
-const expressWs = require('express-ws')(app);
-
-/** Handle a persistent connection to /chat/[roomId]
- *
- * Only called once per client, not every time
- * a particular websocket chat is sent.
- */
-
-app.ws('/chat/:roomId', async function(ws, req, next) {
+io.on("connection", room => {
   try {
-    
-    // register handlers for message-received, connection-opened, connection-closed
-    ws.on('open', function() {
-      try {
+    room.on("open", (msg) => {
+      console.log("socket is open")
+    });
+    room.on("joinroom", (data) => {
+      console.log(data);
+      room.join(data.roomId);
+    })
 
-        console.log("OPENED FROM THE SERVER BACKEND APP.JS");
-
-      } catch (err) {
-        console.error(err);
-      }
+    room.on("message", (msg, id) => {
+      console.log(msg)
+      io.to(id).emit("message", msg);
     });
 
-    ws.on('message', function(data) {
-      try {
-        // Gather all clients that are on this specific web socket
-        expressWs.getWss().clients.forEach(client => {
-          if(client.readyState === 1){
-            client.send(data)
-          }
-        })
-        console.log("MESSAGE SENT")
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    ws.on('close', function() {
+    room.on("close", (msg) => {
       try {
         console.log("CLOSED FROM THE SERVER BACKEND APP.JS")
       } catch (err) {
         console.error(err);
       }
-    });
+      });
   } catch (err) {
     console.error(err);
   }
@@ -129,4 +114,4 @@ app.use(function (err, req, res, next) {
 });
 
 
-module.exports = app;
+module.exports = {app, server};
